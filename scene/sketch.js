@@ -1,9 +1,9 @@
-// Project Title
-// Your Name
-// Date
+// Mulifunction Four-Sided Polygon
+// Shiloh Berscheid
+// 3/8/2019
 //
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Description
+// 
 
 
 let playerX, playerY;
@@ -15,7 +15,7 @@ let isMovingRight, isMovingLeft, isMovingUp;
 let widthIncrease, widthDecrease;
 let heightIncrease, heightDecrease;
 let color, color2, color3, colorChange, colorBuffer;
-let trailOff, Change;
+let trailOff, Change, bgMode;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -45,19 +45,26 @@ function setup() {
   colorBuffer = true;
   trailOff = true;
   Change = false;
+  bgMode = false;
 }
 
 function draw() {
   if (Change === false) {
-    createCanvas(windowWidth, windowHeight);
+    background(255);
   }
 
   //Trail
   if (trailOff) {
-    background(0);
-  }
+    if (bgMode === false) {
+      background(0);
+      fill(255);
+    }
+    else {
+      background(color2, color, color3);
+      fill(color3, color2, color);
+    }
+  } 
   ///DRAWS GROUND
-  fill(255)
   rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
   ///DRAWS PLAYER
   if (colorChange && colorBuffer && !Change) {
@@ -71,7 +78,7 @@ function draw() {
     color2 = random(255);
     color3 = random(255);
   }
-  fill(color, color2, color3)
+  fill(color, color2, color3);
   rect(playerX, playerY, playerWidth, playerHeight);
 
   ///WIDTH AND HEIGHT CHANGING FOR PLAYER
@@ -120,12 +127,14 @@ function draw() {
   if (isMovingUp) {
     gravity = 0;
     verticalSpeed += -verticalAcceleration;
-  } else {
+  }
+  else {
     if (quickDown) {
       gravity = 3;
       verticalSpeedMax = 75;
       horizontalSpeedMax = 1.0;
-    } else {
+    } 
+    else {
       gravity = 0.5;
       verticalSpeedMax = 25;
       horizontalSpeedMax = 6.0;
@@ -147,7 +156,6 @@ function draw() {
   if (playerY <= 0) {
     playerY = 0;
   }
-
   //End Vertical Calculations
 }
 
@@ -164,25 +172,25 @@ function keyPressed() {
   if (keyCode === DOWN_ARROW) { 
     quickDown = true;
   }
-  if (keyCode === 69) { ///Key code for "E"
+  if (key === "e") { ///Key code for "E"
     widthIncrease = true;
   }
-  if (keyCode === 68) { ///Key code for "D"
+  if (key === "d") { ///Key code for "D"
     widthDecrease = true;
   }
-  if (keyCode === 87) { ///Key code for "W"
+  if (key === "w") { ///Key code for "W"
     heightIncrease = true;
   }
-  if (keyCode === 83) { ///Key code for "S"
+  if (key === "s") { ///Key code for "S"
     heightDecrease = true;
   }
-  if (keyCode === 82) { ///Key code for "R"
+  if (key === "r") { ///Key code for "R"
     colorChange = true;
   }
-  if (keyCode === 81) { ///Key code for "Q"
+  if (key === "q") { ///Key code for "Q"
     trailOff = false;
   }
-  if (keyCode === 65) { ///Key code for "A"
+  if (key === "a") { ///Key code for "A"
     trailOff = true;
   }
 }
@@ -200,47 +208,61 @@ function keyReleased() {
   if (keyCode === DOWN_ARROW) {
     quickDown = false;
   }
-  if (keyCode === 69) { ///Key code for "E"
+  if (key === "e") { ///Key code for "E"
     widthIncrease = false;
   }
-  if (keyCode === 68) { ///Key code for "D"
+  if (key === "d") { ///Key code for "D"
     widthDecrease = false;
   }
-  if (keyCode === 87) { ///Key code for "W"
+  if (key === "w") { ///Key code for "W"
     heightIncrease = false;
   }
-  if (keyCode === 83) { ///Key code for "S"
+  if (key === "s") { ///Key code for "S"
     heightDecrease = false;
   }
-  if (keyCode === 82) { ///Key code for "R"
+  if (key === "r") { ///Key code for "R"
     if (!Change) {
       colorChange = false;
       colorBuffer = true;
-    } else {
+    } 
+    else {
       if (colorBuffer) {
         colorBuffer = false;
-      } else {
+      } 
+      else {
         if (colorBuffer === false) {
           colorBuffer = true;
         }
       }
     }
   }
-  if (keyCode === 81) { ///Key code for "Q"
+  if (key === "q") { ///Key code for "Q"
     keyCode = "";
   }
-  if (keyCode === 65) { ///Key code for "A"
+  if (key === "a") { ///Key code for "A"
     keyCode = "";
   }
-  if (keyCode === 32) {
+  if (key === " ") { ///Key code for "SPACE"
     if (Change === true) {
       Change = false;
       colorBuffer = true;
       colorChange = false;
-    } else {
+    } 
+    else {
       if (Change === false) {
         Change = true;
       }
+    }
+  }
+}
+
+function mouseClicked() {
+  if (bgMode === true) {
+    bgMode = false;
+  }
+  else {
+    if (bgMode === false) {
+      bgMode = true;
     }
   }
 }
@@ -251,7 +273,8 @@ function sign(num) {
   }
   if (num < 0) {
     return -1;
-  } else {
+  } 
+  else {
     return 0;
   }
 }
