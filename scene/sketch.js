@@ -15,6 +15,7 @@ let isMovingRight, isMovingLeft, isMovingUp;
 let widthIncrease, widthDecrease;
 let heightIncrease, heightDecrease;
 let color, color2, color3, colorChange, colorBuffer;
+let trailOff, Change;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -42,23 +43,38 @@ function setup() {
   color3 = 255;
   colorChange = false;
   colorBuffer = true;
+  trailOff = true;
+  Change = false;
 }
 
 function draw() {
-  createCanvas(windowWidth, windowHeight);
-  background(0);
+  if (Change === false) {
+    createCanvas(windowWidth, windowHeight);
+  }
+
+  //Trail
+  if (trailOff) {
+    background(0);
+  }
+  ///DRAWS GROUND
   fill(255)
-  rect(0, windowHeight - 50, windowWidth, windowHeight / 10); ///DRAWS GROUND
-  if (colorChange && colorBuffer) {
+  rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
+  ///DRAWS PLAYER
+  if (colorChange && colorBuffer && !Change) {
     colorBuffer = false;
     color = random(255);
     color2 = random(255);
     color3 = random(255);
   }
+  if (colorChange && !colorBuffer && Change) {
+    color = random(255);
+    color2 = random(255);
+    color3 = random(255);
+  }
   fill(color, color2, color3)
-  rect(playerX, playerY, playerWidth, playerHeight); ///DRAWS PLAYER
-  console.log(color);
+  rect(playerX, playerY, playerWidth, playerHeight);
 
+  ///WIDTH AND HEIGHT CHANGING FOR PLAYER
   if (widthIncrease && playerWidth < 250 && playerX + playerWidth <= windowWidth) {
     playerWidth += 1;
   }
@@ -90,29 +106,25 @@ function draw() {
     horizontalSpeed = horizontalSpeedMax * sign(horizontalSpeed);
   }
   playerX += horizontalSpeed;
-  if (playerX <= 0) {
-    horizontalSpeed = 0;
-    isMovingLeft = false;
+  //Left side of screen collision
+  if (playerX < 0) {
+    playerX = 0;
   }
-  if (playerX + playerWidth >= windowWidth) {
-    horizontalSpeed = 0;
-    isMovingRight = false;
+  //Right side of screen collision
+  if (playerX + playerWidth > windowWidth) {
+    playerX = windowWidth - playerWidth;
   }
   ///End Horizontal Calculations
 
-  // Gravity
-
+  ///Vertical Calculations
   if (isMovingUp) {
     gravity = 0;
     verticalSpeed += -verticalAcceleration;
   } else {
     if (quickDown) {
-      gravity = 0.9;
+      gravity = 3;
       verticalSpeedMax = 75;
       horizontalSpeedMax = 1.0;
-      if (sign(verticalSpeed) === -1) {
-        verticalSpeed *= -1;
-      }
     } else {
       gravity = 0.5;
       verticalSpeedMax = 25;
@@ -127,14 +139,16 @@ function draw() {
     verticalSpeed = verticalSpeedMax * sign(verticalSpeed);
   }
   playerY += verticalSpeed;
+  ///Ground collision
   if (playerY + playerHeight >= windowHeight - 50) {
     playerY = windowHeight - 50 - playerHeight;
   }
+  ///Roof collision
   if (playerY <= 0) {
     playerY = 0;
   }
 
-  //End Gravity
+  //End Vertical Calculations
 }
 
 function keyPressed() {
@@ -150,20 +164,26 @@ function keyPressed() {
   if (keyCode === DOWN_ARROW) { 
     quickDown = true;
   }
-  if (keyCode === 119 || keyCode === 87) { ///Key code for "W"
+  if (keyCode === 69) { ///Key code for "E"
     widthIncrease = true;
   }
-  if (keyCode === 101 || keyCode === 69) { ///Key code for "E"
+  if (keyCode === 68) { ///Key code for "D"
     widthDecrease = true;
   }
-  if (keyCode === 100 || keyCode === 68) { ///Key code for "D"
+  if (keyCode === 87) { ///Key code for "W"
     heightIncrease = true;
   }
-  if (keyCode === 102 || keyCode === 70) { ///Key code for "F"
+  if (keyCode === 83) { ///Key code for "S"
     heightDecrease = true;
   }
-  if (keyCode === 114 || keyCode === 82) { ///Key code for "R"
+  if (keyCode === 82) { ///Key code for "R"
     colorChange = true;
+  }
+  if (keyCode === 81) { ///Key code for "Q"
+    trailOff = false;
+  }
+  if (keyCode === 65) { ///Key code for "A"
+    trailOff = true;
   }
 }
 
@@ -180,21 +200,48 @@ function keyReleased() {
   if (keyCode === DOWN_ARROW) {
     quickDown = false;
   }
-  if (keyCode === 119 || keyCode === 87) { ///Key code for "W"
+  if (keyCode === 69) { ///Key code for "E"
     widthIncrease = false;
   }
-  if (keyCode === 101 || keyCode === 69) { ///Key code for "E"
+  if (keyCode === 68) { ///Key code for "D"
     widthDecrease = false;
   }
-  if (keyCode === 100 || keyCode === 68) { ///Key code for "D"
+  if (keyCode === 87) { ///Key code for "W"
     heightIncrease = false;
   }
-  if (keyCode === 102 || keyCode === 70) { ///Key code for "F"
+  if (keyCode === 83) { ///Key code for "S"
     heightDecrease = false;
   }
-  if (keyCode === 114 || keyCode === 82) { ///Key code for "R"
-    colorChange = false;
-    colorBuffer = true;
+  if (keyCode === 82) { ///Key code for "R"
+    if (!Change) {
+      colorChange = false;
+      colorBuffer = true;
+    } else {
+      if (colorBuffer) {
+        colorBuffer = false;
+      } else {
+        if (colorBuffer === false) {
+          colorBuffer = true;
+        }
+      }
+    }
+  }
+  if (keyCode === 81) { ///Key code for "Q"
+    keyCode = "";
+  }
+  if (keyCode === 65) { ///Key code for "A"
+    keyCode = "";
+  }
+  if (keyCode === 32) {
+    if (Change === true) {
+      Change = false;
+      colorBuffer = true;
+      colorChange = false;
+    } else {
+      if (Change === false) {
+        Change = true;
+      }
+    }
   }
 }
 
