@@ -4,6 +4,7 @@
 ////DESCRIPTION
 // -Full player control with the arrow keys
 // -Gravity implementation with a "quick down" mapped to the down key
+// -All code works even if you resize your browser. With the exception of ridiculously small browser sizes
 
 ///During Mode 1 (the "SPACE" key changes modes)
 // -The "w" and "s" keys affect the height of the player
@@ -24,8 +25,6 @@
 // -"""While "bgMode" is active, pressing the "a" and "q" keys 
 //causes the Background to turn on and off a color change effect directly linked to the player's color.
 //This effect also changes the color of the ground. This effect has synergy with "Rainbow Mode".
-
-
 
 let playerX, playerY;
 let playerWidth, playerHeight;
@@ -329,4 +328,8 @@ function playerVerticalCollisionsAndGravity() {
     playerY = 0;
   }
   //END VERTICAL CALCULATIONS
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
