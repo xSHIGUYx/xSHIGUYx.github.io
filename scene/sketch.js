@@ -36,6 +36,7 @@ let widthIncrease, widthDecrease;
 let heightIncrease, heightDecrease;
 let color, color2, color3, colorChange, colorBuffer;
 let trailOff, Change, bgMode;
+let trueFalse;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -66,6 +67,7 @@ function setup() {
   trailOff = true;
   Change = false;
   bgMode = false;
+  trueFalse = [true, false];
 }
 
 function draw() {
@@ -73,12 +75,23 @@ function draw() {
   playerWidthAndHeightChange();
   playerHorizontalCollision();
   playerVerticalCollisionsAndGravity();
+  randomVarChoose();
 }
 
-  
+function randomVarChoose() {
+  widthIncrease = random(trueFalse);
+  widthDecrease = random(trueFalse);
+  heightIncrease = random(trueFalse);
+  heightDecrease = random(trueFalse);
+  colorChange = random(trueFalse);
+  trailOff = random(trueFalse);
+  trailOff = random(trueFalse);
+  Change = random(trueFalse);
+  bgMode = random(trueFalse);
+}  
 
 function keyPressed() {
-  ///All keys are effectively variable switches. Most keys do more once released
+  ///All keys are effectively variable switches.
   if (keyCode === RIGHT_ARROW) {
     isMovingRight = true;
   }
@@ -90,27 +103,6 @@ function keyPressed() {
   }
   if (keyCode === DOWN_ARROW) { 
     quickDown = true;
-  }
-  if (key === "e") { ///Key code for "E"
-    widthIncrease = true;
-  }
-  if (key === "d") { ///Key code for "D"
-    widthDecrease = true;
-  }
-  if (key === "w") { ///Key code for "W"
-    heightIncrease = true;
-  }
-  if (key === "s") { ///Key code for "S"
-    heightDecrease = true;
-  }
-  if (key === "r") { ///Key code for "R"
-    colorChange = true;
-  }
-  if (key === "q") { ///Key code for "Q"
-    trailOff = false;
-  }
-  if (key === "a") { ///Key code for "A"
-    trailOff = true;
   }
 }
 
@@ -126,67 +118,6 @@ function keyReleased() {
   }
   if (keyCode === DOWN_ARROW) {
     quickDown = false;
-  }
-  if (key === "e") { ///Key code for "E"
-    widthIncrease = false;
-  }
-  if (key === "d") { ///Key code for "D"
-    widthDecrease = false;
-  }
-  if (key === "w") { ///Key code for "W"
-    heightIncrease = false;
-  }
-  if (key === "s") { ///Key code for "S"
-    heightDecrease = false;
-  }
-  if (key === "r") { ///Key code for "R"
-    if (!Change) {
-      //Mode 1 color change
-      colorChange = false;
-      colorBuffer = true;
-    } 
-    else {
-      //Mode 2 "Rainbow Mode" toggle
-      if (colorBuffer) {
-        colorBuffer = false;
-      } 
-      else {
-        if (colorBuffer === false) {
-          colorBuffer = true;
-        }
-      }
-    }
-  }
-  if (key === "q") { ///Key code for "Q"
-    keyCode = "";
-  }
-  if (key === "a") { ///Key code for "A"
-    keyCode = "";
-  }
-  if (key === " ") { ///Key code for "SPACE"
-  ///Changes Mode to either 1 or 2 depending on current mode
-    if (Change === true) {
-      Change = false;
-      colorBuffer = true;
-      colorChange = false;
-    } 
-    else {
-      if (Change === false) {
-        Change = true;
-      }
-    }
-  }
-}
-
-function mouseClicked() {
-  ///Activates or deactivates bgMode
-  if (bgMode === true) {
-    bgMode = false;
-  }
-  else {
-    if (bgMode === false) {
-      bgMode = true;
-    }
   }
 }
 
@@ -237,53 +168,53 @@ function playerBgAndFloorDraw() {
 }
 
 function playerWidthAndHeightChange() {
-    ///WIDTH AND HEIGHT CHANGING FOR PLAYER
-    //Width increase and decrease
-    if (widthIncrease && playerWidth < 250 && playerX + playerWidth <= windowWidth) {
-      playerWidth += 1;
-    }
-    if (widthDecrease && playerWidth > 20) {
-      playerWidth += -1;
-    }
-    //Height increase and decrease
-    if (heightIncrease && playerHeight < 250 && playerY >= 0) {
-      playerHeight += 1;
-    }
-    if (heightDecrease && playerHeight > 20) {
-      playerHeight += -1;
-    }
+  ///WIDTH AND HEIGHT CHANGING FOR PLAYER
+  //Width increase and decrease
+  if (widthIncrease && playerWidth < 250 && playerX + playerWidth <= windowWidth) {
+    playerWidth += 1;
+  }
+  if (widthDecrease && playerWidth > 20) {
+    playerWidth += -1;
+  }
+  //Height increase and decrease
+  if (heightIncrease && playerHeight < 250 && playerY >= 0) {
+    playerHeight += 1;
+  }
+  if (heightDecrease && playerHeight > 20) {
+    playerHeight += -1;
+  }
 }
 
 function playerHorizontalCollision() {
-    ///HORIZONTAL CALCULATIONS
-    if (isMovingRight) {
-      horizontalSpeed += horizontalAcceleration;
+  ///HORIZONTAL CALCULATIONS
+  if (isMovingRight) {
+    horizontalSpeed += horizontalAcceleration;
+  }
+  if (isMovingLeft) {
+    horizontalSpeed += -horizontalAcceleration;
+  }
+  ///Add slide effect to player when not pressing anything
+  if (horizontalSpeed !== 0 && !isMovingRight && !isMovingLeft) {
+    horizontalSpeed += horizontalAcceleration * -sign(horizontalSpeed); //Adds acceleration in the opposite direction of player
+    if (horizontalSpeed < 0.5 && horizontalSpeed > -0.5) { //Stops player when decently close to zero move speed
+      horizontalSpeed = 0;
     }
-    if (isMovingLeft) {
-      horizontalSpeed += -horizontalAcceleration;
-    }
-    ///Add slide effect to player when not pressing anything
-    if (horizontalSpeed !== 0 && !isMovingRight && !isMovingLeft) {
-      horizontalSpeed += horizontalAcceleration * -sign(horizontalSpeed); //Adds acceleration in the opposite direction of player
-      if (horizontalSpeed < 0.5 && horizontalSpeed > -0.5) { //Stops player when decently close to zero move speed
-        horizontalSpeed = 0;
-      }
-    }
-    ///Prevent player from going above Max horizontal speed
-    if (Math.abs(horizontalSpeed) > horizontalSpeedMax) {
-      horizontalSpeed = horizontalSpeedMax * sign(horizontalSpeed);
-    }
-    ///Update player's X position
-    playerX += horizontalSpeed;
-    //Left side of screen collision
-    if (playerX < 0) {
-      playerX = 0;
-    }
-    //Right side of screen collision
-    if (playerX + playerWidth > windowWidth) {
-      playerX = windowWidth - playerWidth;
-    }
-    ///END HORIZONTAL CALCULATIONS
+  }
+  ///Prevent player from going above Max horizontal speed
+  if (Math.abs(horizontalSpeed) > horizontalSpeedMax) {
+    horizontalSpeed = horizontalSpeedMax * sign(horizontalSpeed);
+  }
+  ///Update player's X position
+  playerX += horizontalSpeed;
+  //Left side of screen collision
+  if (playerX < 0) {
+    playerX = 0;
+  }
+  //Right side of screen collision
+  if (playerX + playerWidth > windowWidth) {
+    playerX = windowWidth - playerWidth;
+  }
+  ///END HORIZONTAL CALCULATIONS
 }
 
 function playerVerticalCollisionsAndGravity() {
