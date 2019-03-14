@@ -25,49 +25,40 @@
 // -"""While "bgMode" is active, pressing the "a" and "q" keys 
 //causes the Background to turn on and off a color change effect directly linked to the player's color.
 //This effect also changes the color of the ground. This effect has synergy with "Rainbow Mode".
-
-let playerX, playerY;
-let playerWidth, playerHeight;
-let gravity, verticalSpeed;
-let verticalAcceleration, verticalSpeedMax, quickDown;
-let horizontalSpeed, horizontalSpeedMax, horizontalAcceleration;
-let isMovingRight, isMovingLeft, isMovingUp;
-let widthIncrease, widthDecrease;
-let heightIncrease, heightDecrease;
-let color, color2, color3, colorChange, colorBuffer;
-let trailOff, Change, bgMode;
-let trueFalse;
+let trueFalse = [true, false];
+let player;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  playerX = windowWidth / 2;
-  playerY = 0;
-  playerWidth = 35;
-  playerHeight = 50;
-  gravity = 0.5;
-  verticalSpeed = 0;
-  verticalAcceleration = 0.35;
-  verticalSpeedMax = 25;
-  horizontalSpeed = 0;
-  horizontalSpeedMax = 6.0;
-  horizontalAcceleration = 0.4;
-  isMovingLeft = false;
-  isMovingRight = false;
-  isMovingUp = false;
-  widthIncrease = false;
-  widthDecrease = false;
-  heightIncrease = false;
-  heightDecrease = false;
-  quickDown = false;
-  color = 255;
-  color2 = 255;
-  color3 = 255;
-  colorChange = false;
-  colorBuffer = true;
-  trailOff = true;
-  Change = false;
-  bgMode = false;
-  trueFalse = [true, false];
+  player = {
+    x: windowWidth / 2,
+    y: 0,
+    width: 35,
+    height: 50,
+    gravity: 0.5,
+    verticalSpeed: 0,
+    verticalAcceleration: 0.35,
+    verticalSpeedMax: 25,
+    horizontalSpeed: 0,
+    horizontalSpeedMax: 6.0,
+    horizontalAcceleration: 0.4,
+    isMovingLeft: false,
+    isMovingRight: false,
+    isMovingUp: false,
+    widthIncrease: false,
+    widthDecrease: false,
+    heightIncrease: false,
+    heightDecrease: false,
+    quickDown: false,
+    color: 255,
+    color2: 255,
+    color3: 255,
+    colorChange: false,
+    colorBuffer: true,
+    trailOff: true,
+    change: false,
+    bgMode: false,
+  };
 }
 
 function draw() {
@@ -79,45 +70,45 @@ function draw() {
 }
 
 function randomVarChoose() {
-  widthIncrease = random(trueFalse);
-  widthDecrease = random(trueFalse);
-  heightIncrease = random(trueFalse);
-  heightDecrease = random(trueFalse);
-  colorChange = random(trueFalse);
-  trailOff = random(trueFalse);
-  trailOff = random(trueFalse);
-  Change = random(trueFalse);
-  bgMode = random(trueFalse);
+  // player.widthIncrease = random(trueFalse);
+  // player.widthDecrease = random(trueFalse);
+  // player.heightIncrease = random(trueFalse);
+  // player.heightDecrease = random(trueFalse);
+  // player.colorChange = random(trueFalse);
+  // player.trailOff = random(trueFalse);
+  // player.trailOff = random(trueFalse);
+  // player.Change = random(trueFalse);
+  // player.bgMode = random(trueFalse);
 }  
 
 function keyPressed() {
   ///All keys are effectively variable switches.
   if (keyCode === RIGHT_ARROW) {
-    isMovingRight = true;
+    player.isMovingRight = true;
   }
   if (keyCode === LEFT_ARROW) {
-    isMovingLeft = true;
+    player.isMovingLeft = true;
   }
   if (keyCode === UP_ARROW) {
-    isMovingUp = true;
+    player.isMovingUp = true;
   }
   if (keyCode === DOWN_ARROW) { 
-    quickDown = true;
+    player.quickDown = true;
   }
 }
 
 function keyReleased() {
   if (keyCode === RIGHT_ARROW) {
-    isMovingRight = false;
+    player.isMovingRight = false;
   }
   if (keyCode === LEFT_ARROW) {
-    isMovingLeft = false;
+    player.isMovingLeft = false;
   }
   if (keyCode === UP_ARROW) {
-    isMovingUp = false;
+    player.isMovingUp = false;
   }
   if (keyCode === DOWN_ARROW) {
-    quickDown = false;
+    player.quickDown = false;
   }
 }
 
@@ -134,129 +125,129 @@ function sign(num) { ///Simple Function returning the a -1 if a number is negati
 }
 
 function playerBgAndFloorDraw() {
-  if (Change === false) { ///Draws background white when "q" pressed
+  if (player.change === false) { ///Draws background white when "q" pressed
     background(255);
   }
 
   //Player Trail
-  if (trailOff) {
-    if (bgMode === false) {
+  if (player.trailOff) {
+    if (player.bgMode === false) {
       background(0); ///Draws background black when "a" pressed
       fill(255);
     }
     else {
-      background(color2, color, color3); ///bgMode activated with mouse click. Draws bg different color to player color
-      fill(color3, color2, color);
+      background(player.color2, player.color, player.color3); ///bgMode activated with mouse click. Draws bg different color to player color
+      fill(player.color3, player.color2, player.color);
     }
   } 
   ///DRAWS GROUND
   rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
   ///DRAWS PLAYER
-  if (colorChange && colorBuffer && !Change) { ///Mode 1 "r" key
-    colorBuffer = false;
-    color = random(255);
-    color2 = random(255);
-    color3 = random(255);
+  if (player.colorChange && player.colorChange && !player.change) { ///Mode 1 "r" key
+    player.colorChange = false;
+    player.color = random(255);
+    player.color2 = random(255);
+    player.color3 = random(255);
   }
-  if (colorChange && !colorBuffer && Change) { ///Mode 2 "r" key
-    color = random(255);
-    color2 = random(255);
-    color3 = random(255);
+  if (player.colorChange && !player.colorBuffer && player.change) { ///Mode 2 "r" key
+    player.color = random(255);
+    player.color2 = random(255);
+    player.color3 = random(255);
   }
-  fill(color, color2, color3);
-  rect(playerX, playerY, playerWidth, playerHeight);
+  fill(player.color, player.color2, player.color3);
+  rect(player.x, player.y, player.width, player.height);
 }
 
 function playerWidthAndHeightChange() {
   ///WIDTH AND HEIGHT CHANGING FOR PLAYER
   //Width increase and decrease
-  if (widthIncrease && playerWidth < 250 && playerX + playerWidth <= windowWidth) {
-    playerWidth += 1;
+  if (player.widthIncrease && player.playerWidth < 250 && player.x + player.width <= windowWidth) {
+    player.width += 1;
   }
-  if (widthDecrease && playerWidth > 20) {
-    playerWidth += -1;
+  if (player.widthDecrease && player.width > 20) {
+    player.width += -1;
   }
   //Height increase and decrease
-  if (heightIncrease && playerHeight < 250 && playerY >= 0) {
-    playerHeight += 1;
+  if (player.heightIncrease && player.height < 250 && player.y >= 0) {
+    player.height += 1;
   }
-  if (heightDecrease && playerHeight > 20) {
-    playerHeight += -1;
+  if (player.heightDecrease && player.height > 20) {
+    player.height += -1;
   }
 }
 
 function playerHorizontalCollision() {
   ///HORIZONTAL CALCULATIONS
-  if (isMovingRight) {
-    horizontalSpeed += horizontalAcceleration;
+  if (player.isMovingRight) {
+    player.horizontalSpeed += player.horizontalAcceleration;
   }
-  if (isMovingLeft) {
-    horizontalSpeed += -horizontalAcceleration;
+  if (player.isMovingLeft) {
+    player.horizontalSpeed += -player.horizontalAcceleration;
   }
   ///Add slide effect to player when not pressing anything
-  if (horizontalSpeed !== 0 && !isMovingRight && !isMovingLeft) {
-    horizontalSpeed += horizontalAcceleration * -sign(horizontalSpeed); //Adds acceleration in the opposite direction of player
-    if (horizontalSpeed < 0.5 && horizontalSpeed > -0.5) { //Stops player when decently close to zero move speed
-      horizontalSpeed = 0;
+  if (player.horizontalSpeed !== 0 && !player.isMovingRight && !player.isMovingLeft) {
+    player.horizontalSpeed += player.horizontalAcceleration * -sign(player.horizontalSpeed); //Adds acceleration in the opposite direction of player
+    if (player.horizontalSpeed < 0.5 && player.horizontalSpeed > -0.5) { //Stops player when decently close to zero move speed
+      player.horizontalSpeed = 0;
     }
   }
   ///Prevent player from going above Max horizontal speed
-  if (Math.abs(horizontalSpeed) > horizontalSpeedMax) {
-    horizontalSpeed = horizontalSpeedMax * sign(horizontalSpeed);
+  if (Math.abs(player.horizontalSpeed) > player.horizontalSpeedMax) {
+    player.horizontalSpeed = player.horizontalSpeedMax * sign(player.horizontalSpeed);
   }
   ///Update player's X position
-  playerX += horizontalSpeed;
+  player.x += player.horizontalSpeed;
   //Left side of screen collision
-  if (playerX < 0) {
-    playerX = 0;
+  if (player.x < 0) {
+    player.x = 0;
   }
   //Right side of screen collision
-  if (playerX + playerWidth > windowWidth) {
-    playerX = windowWidth - playerWidth;
+  if (player.x + player.width > windowWidth) {
+    player.x = windowWidth - player.width;
   }
   ///END HORIZONTAL CALCULATIONS
 }
 
 function playerVerticalCollisionsAndGravity() {
   ///VERTICAL CALCULATIONS
-  if (isMovingUp) {
+  if (player.isMovingUp) {
     //No gravity when moving up
-    gravity = 0;
-    verticalSpeed += -verticalAcceleration;
+    player.gravity = 0;
+    player.verticalSpeed += -player.verticalAcceleration;
   }
   else {
-    if (quickDown) {
+    if (player.quickDown) {
       //Enhanced gravity and drop rate for "quick down"
-      gravity = 3;
-      verticalSpeedMax = 75;
-      horizontalSpeedMax = 1.0;
+      player.gravity = 3;
+      player.verticalSpeedMax = 75;
+      player.horizontalSpeedMax = 1.0;
     } 
     else {
       //Regular gravity and drop rate
-      gravity = 0.5;
-      verticalSpeedMax = 25;
-      horizontalSpeedMax = 6.0;
+      player.gravity = 0.5;
+      player.verticalSpeedMax = 25;
+      player.horizontalSpeedMax = 6.0;
     }
   }
   ///Update vertical speeed
-  verticalSpeed += gravity;
+  player.verticalSpeed += player.gravity;
   ///Ground collision for removing speed
-  if (playerY + playerHeight >= windowHeight - 50 && verticalSpeed >= 0 || playerY <= 0 && verticalSpeed < 0) {
-    verticalSpeed = 0;
+  if (player.y + player.height >= windowHeight - 50 && player.verticalSpeed >= 0 || player.y <= 0 && player.verticalSpeed < 0) {
+    player.verticalSpeed = 0;
   }
   ///Prevent player from going above Max vertical speed
-  if (Math.abs(verticalSpeed) > verticalSpeedMax) {
-    verticalSpeed = verticalSpeedMax * sign(verticalSpeed);
+  if (Math.abs(player.verticalSpeed) > player.verticalSpeedMax) {
+    player.verticalSpeed = player.verticalSpeedMax * sign(player.verticalSpeed);
   }
   ///Update player's Y position
-  playerY += verticalSpeed;
+  player.y += player.verticalSpeed;
   ///Ground collision for updating y position (removes any possibility of player being "slightly" in the ground)
-  if (playerY + playerHeight >= windowHeight - 50) {
-    playerY = windowHeight - 50 - playerHeight;
+  if (player.y + player.height >= windowHeight - 50) {
+    player.y = windowHeight - 50 - player.height;
   }
   ///Roof collision
-  if (playerY <= 0) {
-    playerY = 0;
+  if (player.y <= 0) {
+    player.y = 0;
   }
   //END VERTICAL CALCULATIONS
 }
