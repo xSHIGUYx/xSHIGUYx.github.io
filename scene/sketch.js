@@ -25,7 +25,6 @@
 // -"""While "bgMode" is active, pressing the "a" and "q" keys 
 //causes the Background to turn on and off a color change effect directly linked to the player's color.
 //This effect also changes the color of the ground. This effect has synergy with "Rainbow Mode".
-let trueFalse = [true, false];
 let player;
 
 function setup() {
@@ -59,6 +58,9 @@ function setup() {
     change: false,
     bgMode: false,
   };
+  window.setInterval(widthHeightIncrease, 200);
+  window.setInterval(widthHeightDecrease, 1000);
+  window.setInterval(randomColorChoose, 1000);
 }
 
 function draw() {
@@ -66,20 +68,36 @@ function draw() {
   playerWidthAndHeightChange();
   playerHorizontalCollision();
   playerVerticalCollisionsAndGravity();
-  randomVarChoose();
 }
 
-function randomVarChoose() {
-  // player.widthIncrease = random(trueFalse);
-  // player.widthDecrease = random(trueFalse);
-  // player.heightIncrease = random(trueFalse);
-  // player.heightDecrease = random(trueFalse);
-  // player.colorChange = random(trueFalse);
-  // player.trailOff = random(trueFalse);
-  // player.trailOff = random(trueFalse);
-  // player.Change = random(trueFalse);
-  // player.bgMode = random(trueFalse);
-}  
+function widthHeightIncrease() {
+  if (player.widthIncrease === true && player.heightIncrease === true) {
+    player.widthIncrease = false;
+    player.heightIncrease = false;
+  }
+  else {
+    player.widthIncrease = true;
+    player.heightIncrease = true;
+  }
+}
+
+function widthHeightDecrease() {
+  if (player.widthDecrease === true && player.heightDecrease === true) {
+    player.widthDecrease = false;
+    player.heightDecrease = false;
+  }
+  else {
+    player.widthDecrease = true;
+    player.heightDecrease = true;
+  }
+}
+
+function randomColorChoose() {
+  player.colorChange = random([true, false]);
+  player.trailOff = random([true, false]);
+  player.Change = random([true, false]);
+  player.bgMode = random([true, false]);
+}
 
 function keyPressed() {
   ///All keys are effectively variable switches.
@@ -132,24 +150,24 @@ function playerBgAndFloorDraw() {
   //Player Trail
   if (player.trailOff) {
     if (player.bgMode === false) {
-      background(0); ///Draws background black when "a" pressed
+      background(0); ///Draws background black
       fill(255);
     }
     else {
-      background(player.color2, player.color, player.color3); ///bgMode activated with mouse click. Draws bg different color to player color
+      background(player.color2, player.color, player.color3); //Draws bg different color to player color
       fill(player.color3, player.color2, player.color);
     }
   } 
   ///DRAWS GROUND
   rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
   ///DRAWS PLAYER
-  if (player.colorChange && player.colorChange && !player.change) { ///Mode 1 "r" key
+  if (player.colorChange && player.colorChange && !player.change) { ///Mode 1
     player.colorChange = false;
     player.color = random(255);
     player.color2 = random(255);
     player.color3 = random(255);
   }
-  if (player.colorChange && !player.colorBuffer && player.change) { ///Mode 2 "r" key
+  if (player.colorChange && !player.colorBuffer && player.change) { ///Mode 2
     player.color = random(255);
     player.color2 = random(255);
     player.color3 = random(255);
@@ -186,8 +204,8 @@ function playerHorizontalCollision() {
   }
   ///Add slide effect to player when not pressing anything
   if (player.horizontalSpeed !== 0 && !player.isMovingRight && !player.isMovingLeft) {
-    player.horizontalSpeed += player.horizontalAcceleration * -sign(player.horizontalSpeed); //Adds acceleration in the opposite direction of player
-    if (player.horizontalSpeed < 0.5 && player.horizontalSpeed > -0.5) { //Stops player when decently close to zero move speed
+    player.horizontalSpeed += player.horizontalAcceleration * -sign(player.horizontalSpeed) * 0.5; //Adds acceleration in the opposite direction of player
+    if (player.horizontalSpeed < 0.25 && player.horizontalSpeed > -0.25) { //Stops player when decently close to zero move speed
       player.horizontalSpeed = 0;
     }
   }
