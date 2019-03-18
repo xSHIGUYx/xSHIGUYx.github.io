@@ -32,8 +32,8 @@ function setup() {
   player = {
     x: windowWidth / 2,
     y: 0,
-    width: 35,
-    height: 50,
+    width: 20,
+    height: 20,
     gravity: 0.5,
     verticalSpeed: 0,
     verticalAcceleration: 0.35,
@@ -57,38 +57,36 @@ function setup() {
     trailOff: true,
     change: false,
     bgMode: false,
+    widthOrHeightMax: 250,
+    widthOrHeightMin: 20,
   };
-  window.setInterval(widthHeightIncrease, 200);
-  window.setInterval(widthHeightDecrease, 1000);
-  window.setInterval(randomColorChoose, 1000);
+  window.setInterval(randomColorChoose, 200);
 }
 
 function draw() {
   playerBgAndFloorDraw();
   playerWidthAndHeightChange();
+  widthHeightIncreaseDecrease();
   playerHorizontalCollision();
   playerVerticalCollisionsAndGravity();
 }
 
-function widthHeightIncrease() {
-  if (player.widthIncrease === true && player.heightIncrease === true) {
-    player.widthIncrease = false;
-    player.heightIncrease = false;
-  }
-  else {
+function widthHeightIncreaseDecrease() {
+  if (player.width === player.widthOrHeightMin) {
+    player.widthDecrease = false;
     player.widthIncrease = true;
+  }
+  if (player.width === player.widthOrHeightMax) {
+    player.widthDecrease = true;
+    player.widthIncrease = false;
+  }
+  if (player.height === player.widthOrHeightMin) {
+    player.heightDecrease = false;
     player.heightIncrease = true;
   }
-}
-
-function widthHeightDecrease() {
-  if (player.widthDecrease === true && player.heightDecrease === true) {
-    player.widthDecrease = false;
-    player.heightDecrease = false;
-  }
-  else {
-    player.widthDecrease = true;
+  if (player.height === player.widthOrHeightMax) {
     player.heightDecrease = true;
+    player.heightIncrease = false;
   }
 }
 
@@ -179,17 +177,17 @@ function playerBgAndFloorDraw() {
 function playerWidthAndHeightChange() {
   ///WIDTH AND HEIGHT CHANGING FOR PLAYER
   //Width increase and decrease
-  if (player.widthIncrease && player.playerWidth < 250 && player.x + player.width <= windowWidth) {
+  if (player.widthIncrease && player.width < player.widthOrHeightMax && player.x + player.width <= windowWidth) {
     player.width += 1;
   }
-  if (player.widthDecrease && player.width > 20) {
+  if (player.widthDecrease && player.width > player.widthOrHeightMin) {
     player.width += -1;
   }
   //Height increase and decrease
-  if (player.heightIncrease && player.height < 250 && player.y >= 0) {
+  if (player.heightIncrease && player.height < player.widthOrHeightMax && player.y >= 0) {
     player.height += 1;
   }
-  if (player.heightDecrease && player.height > 20) {
+  if (player.heightDecrease && player.height > player.widthOrHeightMin) {
     player.height += -1;
   }
 }
