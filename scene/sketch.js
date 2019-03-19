@@ -6,25 +6,6 @@
 // -Gravity implementation with a "quick down" mapped to the down key
 // -All code works even if you resize your browser. With the exception of ridiculously small browser sizes
 
-///During Mode 1 (the "SPACE" key changes modes)
-// -The "w" and "s" keys affect the height of the player
-// -The "e" and "d" keys affect the width of the player
-// -The "q" and "a" keys affect whether the background is white or black
-// -The "r" key changes the player's color each time it is pressed
-// -Note that while the background is white the ground will copy the color of the player
-
-///During Mode 2
-// -The "w", "s", "e", "d" retain their previous functions
-// -The "q" and "a" keys will turn a "Trail Mode" on and off
-// -The "r" key will turn on and off a "Rainbow Mode"
-// -Note that while the "Trail Mode" is active the ground will copy the color of the player
-
-///Mouse Clicked
-// -Clicking the mouse turns on and off "bgMode"
-// -I am aware this variable name is odd for a project that only has two modes for the bg, but I will add more in the future
-// -"""While "bgMode" is active, pressing the "a" and "q" keys 
-//causes the Background to turn on and off a color change effect directly linked to the player's color.
-//This effect also changes the color of the ground. This effect has synergy with "Rainbow Mode".
 let player;
 
 function setup() {
@@ -55,11 +36,11 @@ function setup() {
     colorChange: false,
     colorBuffer: true,
     trailOff: true,
-    change: false,
     bgMode: false,
     widthOrHeightMax: 250,
     widthOrHeightMin: 20,
   };
+
   window.setInterval(randomColorChoose, 200);
 }
 
@@ -141,31 +122,17 @@ function sign(num) { ///Simple Function returning the a -1 if a number is negati
 }
 
 function playerBgAndFloorDraw() {
-  if (player.change === false) { ///Draws background white when "q" pressed
+  if (player.change === false) {
     background(255);
   }
 
-  //Player Trail
-  if (player.trailOff) {
-    if (player.bgMode === false) {
-      background(0); ///Draws background black
-      fill(255);
-    }
-    else {
-      background(player.color2, player.color, player.color3); //Draws bg different color to player color
-      fill(player.color3, player.color2, player.color);
-    }
-  } 
+  ///Draw Trail
+
   ///DRAWS GROUND
+  fill(player.color3, player.color2, player.color);
   rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
   ///DRAWS PLAYER
-  if (player.colorChange && player.colorChange && !player.change) { ///Mode 1
-    player.colorChange = false;
-    player.color = random(255);
-    player.color2 = random(255);
-    player.color3 = random(255);
-  }
-  if (player.colorChange && !player.colorBuffer && player.change) { ///Mode 2
+  if (player.colorChange) {
     player.color = random(255);
     player.color2 = random(255);
     player.color3 = random(255);
