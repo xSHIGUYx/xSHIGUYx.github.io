@@ -7,6 +7,22 @@
 // -All code works even if you resize your browser. With the exception of ridiculously small browser sizes
 
 let player;
+let obstacleArray = [];
+
+class Obstacle {
+  constructor() {
+    this.width = random(50, 200);
+    this.height = random(50, 200);
+    this.x = windowWidth - this.width;
+    this.y = windowHeight - this.height - 50;
+  }
+  showObstacle() {
+    rect(this.x, this.y, this.width, this.height);
+  }
+  move() {
+    this.x -= 1;
+  }
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -35,21 +51,34 @@ function setup() {
     color3: 255,
     colorChange: false,
     colorBuffer: true,
-    trailOff: true,
-    bgMode: false,
     widthOrHeightMax: 250,
     widthOrHeightMin: 20,
   };
 
-  window.setInterval(randomColorChoose, 200);
+  window.setInterval(randomColorChoose, 500);
+  window.setInterval(createObstacle, 2500);
+  createObstacle();
 }
 
 function draw() {
   playerBgAndFloorDraw();
+  obstacleDraw();
   playerWidthAndHeightChange();
   widthHeightIncreaseDecrease();
   playerHorizontalCollision();
   playerVerticalCollisionsAndGravity();
+}
+
+function createObstacle() {
+  print(obstacleArray.length);
+  obstacleArray.push(new Obstacle());
+}
+
+function obstacleDraw() {
+  for (let i = 0; i < obstacleArray.length; i++) {
+    obstacleArray[i].move();
+    obstacleArray[i].showObstacle();
+  }
 }
 
 function widthHeightIncreaseDecrease() {
@@ -72,10 +101,9 @@ function widthHeightIncreaseDecrease() {
 }
 
 function randomColorChoose() {
-  player.colorChange = random([true, false]);
-  player.trailOff = random([true, false]);
-  player.Change = random([true, false]);
-  player.bgMode = random([true, false]);
+  player.color = random(255);
+  player.color2 = random(255);
+  player.color3 = random(255);
 }
 
 function keyPressed() {
@@ -122,21 +150,12 @@ function sign(num) { ///Simple Function returning the a -1 if a number is negati
 }
 
 function playerBgAndFloorDraw() {
-  if (player.change === false) {
-    background(255);
-  }
-
-  ///Draw Trail
+  background(player.color2, player.color3, player.color);
 
   ///DRAWS GROUND
   fill(player.color3, player.color2, player.color);
   rect(0, windowHeight - 50, windowWidth, windowHeight / 10);
   ///DRAWS PLAYER
-  if (player.colorChange) {
-    player.color = random(255);
-    player.color2 = random(255);
-    player.color3 = random(255);
-  }
   fill(player.color, player.color2, player.color3);
   rect(player.x, player.y, player.width, player.height);
 }
