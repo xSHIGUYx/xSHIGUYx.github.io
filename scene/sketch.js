@@ -53,6 +53,10 @@ function setup() {
     colorBuffer: true,
     widthOrHeightMax: 250,
     widthOrHeightMin: 20,
+    leftBlocked: false,
+    rightBlocked: false,
+    upBlocked: false,
+    downBlocked: false,
   };
 
   window.setInterval(randomColorChoose, 500);
@@ -63,14 +67,13 @@ function setup() {
 function draw() {
   playerBgAndFloorDraw();
   obstacleDraw();
-  playerWidthAndHeightChange();
+  //playerWidthAndHeightChange();
   widthHeightIncreaseDecrease();
   playerHorizontalCollision();
   playerVerticalCollisionsAndGravity();
 }
 
 function createObstacle() {
-  print(obstacleArray.length);
   obstacleArray.push(new Obstacle());
 }
 
@@ -108,13 +111,13 @@ function randomColorChoose() {
 
 function keyPressed() {
   ///All keys are effectively variable switches.
-  if (keyCode === RIGHT_ARROW) {
+  if (keyCode === RIGHT_ARROW && !player.rightBlocked) {
     player.isMovingRight = true;
   }
-  if (keyCode === LEFT_ARROW) {
+  if (keyCode === LEFT_ARROW && !player.leftBlocked) {
     player.isMovingLeft = true;
   }
-  if (keyCode === UP_ARROW) {
+  if (keyCode === UP_ARROW && !player.upBlocked) {
     player.isMovingUp = true;
   }
   if (keyCode === DOWN_ARROW) { 
@@ -137,7 +140,7 @@ function keyReleased() {
   }
 }
 
-function sign(num) { ///Simple Function returning the a -1 if a number is negative or a 1 if a number is positive. Finds the sign
+function sign(num) { ///Simple Function returning a -1 if the input is negative or a 1 if the input is positive. Finds the sign
   if (num > 0) {
     return 1;
   }
@@ -180,10 +183,24 @@ function playerWidthAndHeightChange() {
 
 function playerHorizontalCollision() {
   ///HORIZONTAL CALCULATIONS
-  if (player.isMovingRight) {
+  //Left side of screen collision
+  if (player.x <= 0) {
+    player.leftBlocked = true;
+  }
+  else {
+    player.leftBlocked = false;
+  }
+  //Right side of screen collision
+  if (player.x + player.width >= windowWidth) {
+    player.rightBlocked = true;
+  }
+  else {
+    player.rightBlocked = false;
+  }
+  if (player.isMovingRight && !player.rightBlocked) {
     player.horizontalSpeed += player.horizontalAcceleration;
   }
-  if (player.isMovingLeft) {
+  if (player.isMovingLeft && !player.leftBlocked) {
     player.horizontalSpeed += -player.horizontalAcceleration;
   }
   ///Add slide effect to player when not pressing anything
@@ -197,21 +214,33 @@ function playerHorizontalCollision() {
   if (Math.abs(player.horizontalSpeed) > player.horizontalSpeedMax) {
     player.horizontalSpeed = player.horizontalSpeedMax * sign(player.horizontalSpeed);
   }
+  if (player.rightBlocked) {
+    player.horizontalSpeed = constrain(player.horizontalSpeed, -player.horizontalSpeedMax, 0);
+  }
+  if (player.leftBlocked) {
+    player.horizontalSpeed = constrain(player.horizontalSpeed, 0, player.horizontalSpeedMax);
+  }
   ///Update player's X position
   player.x += player.horizontalSpeed;
-  //Left side of screen collision
-  if (player.x < 0) {
-    player.x = 0;
-  }
-  //Right side of screen collision
-  if (player.x + player.width > windowWidth) {
-    player.x = windowWidth - player.width;
-  }
   ///END HORIZONTAL CALCULATIONS
 }
 
 function playerVerticalCollisionsAndGravity() {
-  ///VERTICAL CALCULATIONS
+///VERTICAL CALCULATIONS
+///Ground collision for updating y position (removes any possibility of player being "slightly" in the ground)
+  if (player.y + player.height > windowHeight - 50) {
+    player.downBlocked = true;
+  }
+  else {
+    player.downBlocked = false;
+  }
+  ///Roof collision
+  if (player.y <= 0) {
+    player.upBlocked = true;
+  }
+  else {
+    player.upBlocked = false;
+  }
   if (player.isMovingUp) {
     //No gravity when moving up
     player.gravity = 0;
@@ -233,24 +262,16 @@ function playerVerticalCollisionsAndGravity() {
   }
   ///Update vertical speeed
   player.verticalSpeed += player.gravity;
-  ///Ground collision for removing speed
-  if (player.y + player.height >= windowHeight - 50 && player.verticalSpeed >= 0 || player.y <= 0 && player.verticalSpeed < 0) {
-    player.verticalSpeed = 0;
-  }
   ///Prevent player from going above Max vertical speed
-  if (Math.abs(player.verticalSpeed) > player.verticalSpeedMax) {
-    player.verticalSpeed = player.verticalSpeedMax * sign(player.verticalSpeed);
+  player.verticalSpeed = constrain(player.verticalSpeed, player.verticalSpeedMax, -player.verticalSpeedMax);
+  if (player.downBlocked) {
+    player.verticalSpeed = constrain(player.verticalSpeed, -player.verticalSpeedMax, 0);
+  }
+  if (player.upBlocked) {
+    player.verticalSpeed = constrain(player.verticalSpeed, player.verticalSpeedMax, 0);
   }
   ///Update player's Y position
   player.y += player.verticalSpeed;
-  ///Ground collision for updating y position (removes any possibility of player being "slightly" in the ground)
-  if (player.y + player.height >= windowHeight - 50) {
-    player.y = windowHeight - 50 - player.height;
-  }
-  ///Roof collision
-  if (player.y <= 0) {
-    player.y = 0;
-  }
   //END VERTICAL CALCULATIONS
 }
 
