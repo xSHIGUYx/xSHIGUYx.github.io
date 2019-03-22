@@ -57,10 +57,12 @@ function setup() {
     rightBlocked: false,
     upBlocked: false,
     downBlocked: false,
+    leftCurrentlyBlocked: false,
+    downCurrentlyBlocked: false,
   };
 
   window.setInterval(randomColorChoose, 500);
-  window.setInterval(createObstacle, 2500);
+  // window.setInterval(createObstacle, 2500);
   createObstacle();
 }
 
@@ -75,13 +77,6 @@ function draw() {
 
 function createObstacle() {
   obstacleArray.push(new Obstacle());
-}
-
-function obstacleDraw() {
-  for (let i = 0; i < obstacleArray.length; i++) {
-    obstacleArray[i].move();
-    obstacleArray[i].showObstacle();
-  }
 }
 
 function widthHeightIncreaseDecrease() {
@@ -188,7 +183,9 @@ function playerHorizontalCollision() {
     player.leftBlocked = true;
   }
   else {
-    player.leftBlocked = false;
+    if (player.leftCurrentlyBlocked === false) {
+      player.leftBlocked = false;
+    }
   }
   //Right side of screen collision
   if (player.x + player.width >= windowWidth) {
@@ -211,9 +208,7 @@ function playerHorizontalCollision() {
     }
   }
   ///Prevent player from going above Max horizontal speed
-  if (Math.abs(player.horizontalSpeed) > player.horizontalSpeedMax) {
-    player.horizontalSpeed = player.horizontalSpeedMax * sign(player.horizontalSpeed);
-  }
+  player.horizontalSpeed = constrain(player.horizontalSpeed, -player.horizontalSpeedMax, player.horizontalSpeedMax);
   if (player.rightBlocked) {
     player.horizontalSpeed = constrain(player.horizontalSpeed, -player.horizontalSpeedMax, 0);
   }
@@ -222,17 +217,20 @@ function playerHorizontalCollision() {
   }
   ///Update player's X position
   player.x += player.horizontalSpeed;
+  player.x = constrain(player.x, 0, width);
   ///END HORIZONTAL CALCULATIONS
 }
 
 function playerVerticalCollisionsAndGravity() {
 ///VERTICAL CALCULATIONS
 ///Ground collision for updating y position (removes any possibility of player being "slightly" in the ground)
-  if (player.y + player.height > windowHeight - 50) {
+  if (player.y + player.height >= windowHeight - 50) {
     player.downBlocked = true;
   }
   else {
-    player.downBlocked = false;
+    if (player.downCurrentlyBlocked === false) {
+      player.downBlocked = false;
+    }
   }
   ///Roof collision
   if (player.y <= 0) {
@@ -263,16 +261,44 @@ function playerVerticalCollisionsAndGravity() {
   ///Update vertical speeed
   player.verticalSpeed += player.gravity;
   ///Prevent player from going above Max vertical speed
-  player.verticalSpeed = constrain(player.verticalSpeed, player.verticalSpeedMax, -player.verticalSpeedMax);
+  player.verticalSpeed = constrain(player.verticalSpeed, -player.verticalSpeedMax, player.verticalSpeedMax);
   if (player.downBlocked) {
     player.verticalSpeed = constrain(player.verticalSpeed, -player.verticalSpeedMax, 0);
   }
   if (player.upBlocked) {
-    player.verticalSpeed = constrain(player.verticalSpeed, player.verticalSpeedMax, 0);
+    player.verticalSpeed = constrain(player.verticalSpeed, 0, player.verticalSpeedMax);
   }
   ///Update player's Y position
   player.y += player.verticalSpeed;
+  player.y = constrain(player.y, 0, height - 50 - player.height);
   //END VERTICAL CALCULATIONS
+}
+
+function obstacleDraw() {
+  for (let i = 0; i < obstacleArray.length; i++) {
+    obstacleArray[i].move();
+    if (obstacleArray[i].x + obstacleArray[i].width >= 0) {
+      obstacleArray[i].showObstacle();
+    }
+    player.leftCurrentlyBlocked = false;
+    if (player.x <= obstacleArray[i].x + obstacleArray[i].width 
+      && player.y + player.height <= obstacleArray[i].y + obstacleArray[i].height
+      && player.y >= obstacleArray[i].y
+      && !player.downCurrentlyBlocked) {
+      player.leftBlocked = true;
+      player.leftCurrentlyBlocked = true;
+      player.x = constrain(player.x, obstacleArray[i].x + obstacleArray[i].width, width);
+    }
+    player.downCurrentlyBlocked = false;
+    if (player.x + player.width >= obstacleArray[i].x 
+      && player.x <= obstacleArray[i].x + obstacleArray[i].width
+      && player.y + player.height >= obstacleArray[i].y
+      && !player.leftCurrentlyBlocked) {
+      player.downBlocked = true;
+      player.downCurrentlyBlocked = true;
+      player.y = constrain(player.y, obstacleArray[i].y - player.height, 0);
+    }
+  }
 }
 
 function windowResized() {
