@@ -15,12 +15,17 @@ class Obstacle {
     this.height = random(50, 200);
     this.x = windowWidth - this.width;
     this.y = windowHeight - this.height - 50;
+    this.rightSide = this.x;
+    this.leftSide = this.x + this.width;
+    this.top = this.y;
+    this.bottom = this.y + this.height;
   }
   showObstacle() {
     rect(this.x, this.y, this.width, this.height);
   }
-  move() {
-    this.x -= 1;
+  move(speed) {
+    this.speed = speed;
+    this.x += this.speed;
   }
 }
 
@@ -58,6 +63,7 @@ function setup() {
     upBlocked: false,
     downBlocked: false,
     leftCurrentlyBlocked: false,
+    rightCurrentlyBlocked: false,
     downCurrentlyBlocked: false,
   };
 
@@ -192,7 +198,9 @@ function playerHorizontalCollision() {
     player.rightBlocked = true;
   }
   else {
-    player.rightBlocked = false;
+    if (player.rightCurrentlyBlocked === false) {
+      player.rightBlocked = false;
+    }
   }
   if (player.isMovingRight && !player.rightBlocked) {
     player.horizontalSpeed += player.horizontalAcceleration;
@@ -276,27 +284,39 @@ function playerVerticalCollisionsAndGravity() {
 
 function obstacleDraw() {
   for (let i = 0; i < obstacleArray.length; i++) {
-    obstacleArray[i].move();
-    if (obstacleArray[i].x + obstacleArray[i].width >= 0) {
+    obstacleArray[i].move(-1);
+    if (this.rightSide >= 0) {
       obstacleArray[i].showObstacle();
     }
-    player.leftCurrentlyBlocked = false;
-    if (player.x <= obstacleArray[i].x + obstacleArray[i].width 
-      && player.y + player.height <= obstacleArray[i].y + obstacleArray[i].height
-      && player.y >= obstacleArray[i].y
-      && !player.downCurrentlyBlocked) {
+
+    if (player.x <= this.leftSide
+      && player.x >= this.leftSide - player.width
+      && player.y + player.height <= this.bottom
+      && player.y >= this.top
+      && !player.downCurrentlyBlocked
+      && !player.rightCurrentlyBlocked) {
       player.leftBlocked = true;
       player.leftCurrentlyBlocked = true;
-      player.x = constrain(player.x, obstacleArray[i].x + obstacleArray[i].width, width);
+      player.x = constrain(player.x, this.rightSide, width);
     }
-    player.downCurrentlyBlocked = false;
-    if (player.x + player.width >= obstacleArray[i].x 
-      && player.x <= obstacleArray[i].x + obstacleArray[i].width
-      && player.y + player.height >= obstacleArray[i].y
+    if (player.x <= this.rightSide + player.width
+      && player.x >= this.rightSide
+      && player.y + player.height <= this.bottom
+      && player.y >= this.top
+      && !player.downCurrentlyBlocked
       && !player.leftCurrentlyBlocked) {
+      player.rightBlocked = true;
+      player.rightCurrentlyBlocked = true;
+      player.x = constrain(player.x, 0, this.leftSide);
+    }
+    if (player.x + player.width >= this.rightSide 
+      && player.x <= this.leftSide
+      && player.y + player.height >= this.top
+      && !player.leftCurrentlyBlocked
+      && !player.rightCurrentlyBlocked) {
       player.downBlocked = true;
       player.downCurrentlyBlocked = true;
-      player.y = constrain(player.y, obstacleArray[i].y - player.height, 0);
+      player.y = constrain(player.y, 0, this.top - player.height);
     }
   }
 }
