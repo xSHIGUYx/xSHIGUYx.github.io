@@ -64,7 +64,7 @@ function setup() {
   };
 
   window.setInterval(randomColorChoose, 500);
-  // window.setInterval(createObstacle, 2500);
+  window.setInterval(createObstacle, 2500);
   createObstacle();
 }
 
