@@ -5,12 +5,18 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let gridSize = 10;
+let gridSize = 25;
 let grid;
 let cellSize;
+let updating = false;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  if (windowWidth > windowHeight) {
+    createCanvas(windowHeight, windowHeight);
+  }
+  else {
+    createCanvas(windowWidth, windowWidth);
+  }
   cellSize = width/gridSize;
   grid = createRandom2DArray(gridSize, gridSize);
 }
@@ -58,5 +64,81 @@ function displayGrid() {
       }
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
+  }
+}
+
+function update() {
+  if (updating) {
+    let nextTurn = create2DArray(gridSize, gridSize);
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        let neighbors = 0;
+  
+        ///look at the 3x3 grid around the current location
+        for(let i = -1; i <= 1; i++) {
+          for (let j = -1; j <= 1; j++) {
+            if (y+i >= 0 && y+i < gridSize && x+j >= 0 && x+j < gridSize) {
+              neighbors += grid[y+i][x+j];
+            }
+          }
+        }
+  
+        neighbors -= grid[y][x];
+  
+        //appplying the rules of the game
+        if (grid[y][x] === 1) {//alive
+          if(neighbors === 2|| neighbors === 3) {
+            nextTurn[y][x] = 1;
+          }
+          else {
+            nextTurn[y][x] = 0;
+          }
+        }
+        else {//dead
+          if (neighbors === 3) {
+            nextTurn[y][x] = 1;
+          }
+          else {
+            nextTurn[y][x] = 0;
+          }
+        }
+      }
+    }
+  
+    grid = nextTurn;
+  }
+}
+
+function keyPressed() {
+  if (key === " ") {
+    for (let y = 0; y < grid.length; y++) {
+      for (let x = 0; x < grid.length; x++) {
+        grid[y][x] = 0;
+      }
+    }
+  }
+
+  if (key === "s") {
+    if (updating === false) {
+      updating = true;
+      window.setInterval(update, 100);
+    }
+    else {
+      updating = false;
+    }
+  }
+
+}
+
+function mousePressed() {
+  let xcoord = floor(mouseX / cellSize);
+  let ycoord = floor(mouseY / cellSize);
+
+  if (grid[ycoord][xcoord] === 1) {
+    grid[ycoord][xcoord] = 0;
+  }
+  else {
+    grid[ycoord][xcoord] = 1;
   }
 }
