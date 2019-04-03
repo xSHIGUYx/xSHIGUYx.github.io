@@ -5,10 +5,11 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let gridSize = 25;
+let gridSize = 10000;
 let grid;
 let cellSize;
 let updating = false;
+let updateSpeed = 150;
 
 function setup() {
   if (windowWidth > windowHeight) {
@@ -19,6 +20,7 @@ function setup() {
   }
   cellSize = width/gridSize;
   grid = createRandom2DArray(gridSize, gridSize);
+  noStroke();
 }
 
 function draw() {
@@ -110,6 +112,10 @@ function update() {
   }
 }
 
+function loadingComplete() {
+  loop();
+}
+
 function keyPressed() {
   if (key === " ") {
     for (let y = 0; y < grid.length; y++) {
@@ -122,13 +128,25 @@ function keyPressed() {
   if (key === "s") {
     if (updating === false) {
       updating = true;
-      window.setInterval(update, 100);
+      window.setInterval(update, updateSpeed);
     }
     else {
       updating = false;
     }
   }
 
+  if (key === "r") {
+    grid = createRandom2DArray(gridSize, gridSize);
+  }
+
+  if (key === "d") {
+    saveJSON(grid, "thegrid.json");
+  }
+
+  if (key === "l") {
+    noLoop();
+    grid = loadJSON("assets/staleshapes.json", loadingComplete);
+  }
 }
 
 function mousePressed() {
