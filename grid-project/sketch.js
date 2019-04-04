@@ -19,32 +19,12 @@ function setup() {
     createCanvas(windowWidth, windowWidth);
   }
   cellSize = width/gridSize;
-  grid = createRandom2DArray(gridSize, gridSize);
+  grid = create2DArray(gridSize, gridSize);
 }
 
 function draw() {
   background(255);
   displayGrid();
-  keyHoldCheck();
-}
-
-function keyHoldCheck() {
-  if (keyIsPressed) {
-    if (key === "q") {
-      if (gridSize < 150) {
-        gridSize += 1;
-        cellSize = width/gridSize;
-        grid = createRandom2DArray(gridSize, gridSize);
-      }
-    }
-    if (key === "a") {
-      if (gridSize > 8) {
-        gridSize -= 1;
-        cellSize = width/gridSize;
-        grid = createRandom2DArray(gridSize, gridSize);
-      }
-    }
-  }
 }
 
 function create2DArray(cols, rows) {
@@ -53,22 +33,6 @@ function create2DArray(cols, rows) {
     emptyArray.push([]);
     for (let j = 0; j < cols; j++) {
       emptyArray[i].push(0);
-    }
-  }
-  return emptyArray;
-}
-
-function createRandom2DArray(cols, rows) {
-  let emptyArray = [];
-  for (let i = 0; i < rows; i++) {
-    emptyArray.push([]);
-    for (let j = 0; j < cols; j++) {
-      if (random(100) < 50) {
-        emptyArray[i].push(0);
-      }
-      else {
-        emptyArray[i].push(1);
-      }
     }
   }
   return emptyArray;
@@ -133,51 +97,4 @@ function update() {
 
 function loadingComplete() {
   loop();
-}
-
-function keyPressed() {
-  if (key === " ") {
-    for (let y = 0; y < grid.length; y++) {
-      for (let x = 0; x < grid.length; x++) {
-        grid[y][x] = 0;
-      }
-    }
-  }
-
-  if (key === "s") {
-    if (updating === false) {
-      updating = true;
-      window.setInterval(update, updateSpeed);
-    }
-    else {
-      updating = false;
-    }
-  }
-
-  if (key === "r") {
-    grid = createRandom2DArray(gridSize, gridSize);
-  }
-
-  if (key === "d") {
-    saveJSON(grid, "thegrid.json");
-  }
-
-  if (key === "l") {
-    noLoop();
-    gridSize = 25;
-    cellSize = width/gridSize;
-    grid = loadJSON("assets/staleshapes.json", loadingComplete);
-  }
-}
-
-function mousePressed() {
-  let xcoord = floor(mouseX / cellSize);
-  let ycoord = floor(mouseY / cellSize);
-
-  if (grid[ycoord][xcoord] === 1) {
-    grid[ycoord][xcoord] = 0;
-  }
-  else {
-    grid[ycoord][xcoord] = 1;
-  }
 }
