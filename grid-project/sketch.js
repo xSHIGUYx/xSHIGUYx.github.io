@@ -53,46 +53,7 @@ function displayGrid() {
 }
 
 function update() {
-  if (updating) {
-    let nextTurn = create2DArray(gridSize, gridSize);
-
-    for (let y = 0; y < gridSize; y++) {
-      for (let x = 0; x < gridSize; x++) {
-        let neighbors = 0;
-  
-        ///look at the 3x3 grid around the current location
-        for(let i = -1; i <= 1; i++) {
-          for (let j = -1; j <= 1; j++) {
-            if (y+i >= 0 && y+i < gridSize && x+j >= 0 && x+j < gridSize) {
-              neighbors += grid[y+i][x+j];
-            }
-          }
-        }
-  
-        neighbors -= grid[y][x];
-  
-        //appplying the rules of the game
-        if (grid[y][x] === 1) {//alive
-          if(neighbors === 2|| neighbors === 3) {
-            nextTurn[y][x] = 1;
-          }
-          else {
-            nextTurn[y][x] = 0;
-          }
-        }
-        else {//dead
-          if (neighbors === 3) {
-            nextTurn[y][x] = 1;
-          }
-          else {
-            nextTurn[y][x] = 0;
-          }
-        }
-      }
-    }
-  
-    grid = nextTurn;
-  }
+    
 }
 
 function loadingComplete() {
