@@ -32,7 +32,12 @@ function create2DArray(cols, rows) {
   for (let i = 0; i < rows; i++) {
     emptyArray.push([]);
     for (let j = 0; j < cols; j++) {
-      emptyArray[i].push(0);
+      if (j === 3 && i === 2) {
+        emptyArray[i].push(1);
+      }
+      else {
+        emptyArray[i].push(0);
+      }
     }
   }
   return emptyArray;
@@ -52,10 +57,12 @@ function displayGrid() {
   }
 }
 
-function update() {
-    
-}
-
-function loadingComplete() {
-  loop();
+function keyPressed() {
+  if (key === "d") {
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        
+      }
+    }
+  }
 }
