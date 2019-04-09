@@ -8,8 +8,6 @@
 let gridSize = 8;
 let grid;
 let cellSize;
-let updating = false;
-let updateSpeed = 150;
 
 function setup() {
   if (windowWidth > windowHeight) {
@@ -20,11 +18,27 @@ function setup() {
   }
   cellSize = width/gridSize;
   grid = create2DArray(gridSize, gridSize);
+  window.setInterval(moveWall, 1000);
 }
 
 function draw() {
-  background(255);
   displayGrid();
+}
+
+function moveWall() {
+  grid[4].shift();
+  let counter = 0;
+  for (let i = 0; i < grid[4].length; i++) {
+    if (grid[4][i] !== 2) {
+      counter = 1;
+    }
+  }
+  if (counter === 1) {
+    grid[4].push(2);
+  }
+  else {
+    grid[4].push(0);
+  }
 }
 
 function create2DArray(cols, rows) {
@@ -52,16 +66,16 @@ function create2DArray(cols, rows) {
 function displayGrid() {
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
-      if (grid[y][x] === 0 || grid[y][x] === 2) {
+      if (grid[y][x] === 1 || grid[y][x] === 2) {
         if (grid[y][x] === 2) {
           fill(255, 0, 0);
         }
         else {
-          fill(255);
+          fill(0);
         }
       }
       else {
-        fill(0);
+        fill(255);
       }
       rect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
