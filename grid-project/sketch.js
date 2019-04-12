@@ -18,7 +18,7 @@ function setup() {
   }
   cellSize = width/gridSize;
   grid = create2DArray(gridSize, gridSize);
-  window.setInterval(moveWall, 1000);
+  window.setInterval(moveWall, 400);
 }
 
 function draw() {
