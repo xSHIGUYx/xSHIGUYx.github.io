@@ -5,9 +5,34 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let gridSize = 8;
+let gridSize = 9;
 let grid;
 let cellSize;
+let state;
+
+class Wall {
+  constructor(speed, openWallX, wallY) {
+    this.speed = speed;
+    this.openWallX = openWallX;
+    this.wallY = wallY;
+  }
+
+  move() {
+    grid[this.wallY].shift();
+    let counter = 0;
+    for (let i = 0; i < grid[this.wallY].length; i++) {
+      if (grid[this.wallY][i] !== 2) {
+        counter = 1;
+      }
+    }
+    if (counter === 1) {
+      grid[this.wallY].push(2);
+    }
+    else {
+      grid[this.wallY].push(0);
+    }
+  }
+}
 
 function setup() {
   if (windowWidth > windowHeight) {
@@ -18,11 +43,39 @@ function setup() {
   }
   cellSize = width/gridSize;
   grid = create2DArray(gridSize, gridSize);
+  state = "gamePlay";
   window.setInterval(moveWall, 400);
+  window.setInterval(moveWall2, 200);
 }
 
 function draw() {
-  displayGrid();
+  if (state === "gamePlay") {
+    displayGrid();
+    deathCheck();
+  }
+  else if (state === "gameOver") {
+    background(255);
+    textAlign(CENTER);
+    textSize(140);
+    fill(0);
+    text("Game Over!", width/2, height/2);
+    textSize(70);
+    text("Press 'R' To Restart!", width/2, height/2 + 100);
+  }
+}
+
+function deathCheck() {
+  let counter = 0;
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      if (grid[y][x] === 1) {
+        counter = 1;
+      }
+    }
+  }
+  if (counter === 0) {
+    state = "gameOver";
+  }
 }
 
 function moveWall() {
@@ -41,17 +94,36 @@ function moveWall() {
   }
 }
 
+function moveWall2() {
+  grid[6].shift();
+  let counter = 0;
+  for (let i = 0; i < grid[6].length; i++) {
+    if (grid[6][i] !== 2) {
+      counter = 1;
+    }
+  }
+  if (counter === 1) {
+    grid[6].push(2);
+  }
+  else {
+    grid[6].push(0);
+  }
+}
+
 function create2DArray(cols, rows) {
   let emptyArray = [];
   for (let i = 0; i < rows; i++) {
     emptyArray.push([]);
     for (let j = 0; j < cols; j++) {
       ///Player create
-      if (j === 3 && i === 2) {
+      if (j === 4 && i === 2) {
         emptyArray[i].push(1);
       }
       ///Wall create
-      if (j !== 3 && i === 4) {
+      if (j !== 2 && i === 4) {
+        emptyArray[i].push(2);
+      }
+      else if (j !== 3 && i === 6) {
         emptyArray[i].push(2);
       }
       ///Blank Space Create
@@ -139,6 +211,14 @@ function keyPressed() {
       if (counter === 1) {
         break;
       }
+    }
+  }
+
+  //Restart
+  if (key === "r" || key === "R") {
+    if (state === "gameOver") {
+      grid = create2DArray(gridSize, gridSize);
+      state = "gamePlay";
     }
   }
 }
