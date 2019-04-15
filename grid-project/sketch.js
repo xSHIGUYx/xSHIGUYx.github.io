@@ -9,27 +9,50 @@ let gridSize = 9;
 let grid;
 let cellSize;
 let state;
+let walls = [];
+let timer;
+
+class Timer {
+  constructor(timeToWait) {
+    this.timeToWait = timeToWait;
+    this.startTime = millis();
+    this.endTime = this.startTime + this.timeToWait;
+  }
+
+  isDone() {
+    return millis() >= this.endTime;
+  }
+}
 
 class Wall {
-  constructor(speed, openWallX, wallY) {
-    this.speed = speed;
+  constructor(openWallX, wallY, speed, doesItMove) {
     this.openWallX = openWallX;
     this.wallY = wallY;
+    this.speed = speed;
+    this.doesItMove = doesItMove;
   }
 
   move() {
-    grid[this.wallY].shift();
-    let counter = 0;
-    for (let i = 0; i < grid[this.wallY].length; i++) {
-      if (grid[this.wallY][i] !== 2) {
-        counter = 1;
+    if (this.doesItMove) {
+      for (let i = 0; i < this.speed; i++) {
+        grid[this.wallY].shift();
       }
-    }
-    if (counter === 1) {
-      grid[this.wallY].push(2);
-    }
-    else {
-      grid[this.wallY].push(0);
+      let counter = 0;
+      for (let i = 0; i < grid[this.wallY].length; i++) {
+        if (grid[this.wallY][i] !== 2) {
+          counter = 1;
+        }
+      }
+      if (counter === 1) {
+        for (let i = 0; i < this.speed; i++) {
+          grid[this.wallY].push(2);
+        }
+      }
+      else {
+        for (let i = 0; i < this.speed; i++) {
+          grid[this.wallY].push(0);
+        }
+      }
     }
   }
 }
@@ -42,15 +65,24 @@ function setup() {
     createCanvas(windowWidth, windowWidth);
   }
   cellSize = width/gridSize;
+  let wall1 = new Wall(4, 4, 1, true);
+  let wall2 = new Wall(5, 5, 2, true);
+  walls.push(wall1);
+  walls.push(wall2);
   grid = create2DArray(gridSize, gridSize);
   state = "gamePlay";
-  window.setInterval(moveWall, 400);
-  window.setInterval(moveWall2, 200);
+  timer = new Timer(500);
 }
 
 function draw() {
   if (state === "gamePlay") {
     displayGrid();
+    if (timer.isDone()) {
+      for (let i = 0; i < walls.length; i++) {
+        walls[i].move();
+      }
+      timer = new Timer(500);
+    }
     deathCheck();
   }
   else if (state === "gameOver") {
@@ -78,53 +110,21 @@ function deathCheck() {
   }
 }
 
-function moveWall() {
-  grid[4].shift();
-  let counter = 0;
-  for (let i = 0; i < grid[4].length; i++) {
-    if (grid[4][i] !== 2) {
-      counter = 1;
-    }
-  }
-  if (counter === 1) {
-    grid[4].push(2);
-  }
-  else {
-    grid[4].push(0);
-  }
-}
-
-function moveWall2() {
-  grid[6].shift();
-  let counter = 0;
-  for (let i = 0; i < grid[6].length; i++) {
-    if (grid[6][i] !== 2) {
-      counter = 1;
-    }
-  }
-  if (counter === 1) {
-    grid[6].push(2);
-  }
-  else {
-    grid[6].push(0);
-  }
-}
-
 function create2DArray(cols, rows) {
   let emptyArray = [];
   for (let i = 0; i < rows; i++) {
     emptyArray.push([]);
     for (let j = 0; j < cols; j++) {
+      ///Wall Create
+      for (let w = 0; w < walls.length; w++) {
+        if (j === walls[w].openWallX && i === walls[w].wallY) {
+          emptyArray[i].push(2);
+          print(walls[w]);
+        }
+      }
       ///Player create
       if (j === 4 && i === 2) {
         emptyArray[i].push(1);
-      }
-      ///Wall create
-      if (j !== 2 && i === 4) {
-        emptyArray[i].push(2);
-      }
-      else if (j !== 3 && i === 6) {
-        emptyArray[i].push(2);
       }
       ///Blank Space Create
       else {
