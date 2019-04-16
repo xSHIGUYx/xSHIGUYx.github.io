@@ -66,7 +66,7 @@ function setup() {
   }
   cellSize = width/gridSize;
   let wall1 = new Wall(4, 4, 1, true);
-  let wall2 = new Wall(5, 5, 2, true);
+  let wall2 = new Wall(5, 5, 1, true);
   walls.push(wall1);
   walls.push(wall2);
   grid = create2DArray(gridSize, gridSize);
