@@ -33,25 +33,23 @@ class Wall {
   }
 
   move() {
-    if (this.doesItMove) {
+    for (let i = 0; i < this.speed; i++) {
+      grid[this.wallY].shift();
+    }
+    let counter = 0;
+    for (let i = 0; i < grid[this.wallY].length; i++) {
+      if (grid[this.wallY][i] !== 2) {
+        counter = 1;
+      }
+    }
+    if (counter === 1) {
       for (let i = 0; i < this.speed; i++) {
-        grid[this.wallY].shift();
+        grid[this.wallY].push(2);
       }
-      let counter = 0;
-      for (let i = 0; i < grid[this.wallY].length; i++) {
-        if (grid[this.wallY][i] !== 2) {
-          counter = 1;
-        }
-      }
-      if (counter === 1) {
-        for (let i = 0; i < this.speed; i++) {
-          grid[this.wallY].push(2);
-        }
-      }
-      else {
-        for (let i = 0; i < this.speed; i++) {
-          grid[this.wallY].push(0);
-        }
+    }
+    else {
+      for (let i = 0; i < this.speed; i++) {
+        grid[this.wallY].push(0);
       }
     }
   }
@@ -65,11 +63,22 @@ function setup() {
     createCanvas(windowWidth, windowWidth);
   }
   cellSize = width/gridSize;
-  let wall1 = new Wall(4, 4, 1, true);
-  let wall2 = new Wall(5, 5, 1, true);
-  walls.push(wall1);
-  walls.push(wall2);
+  ///Wall Creation
+
+  let wall = new Wall(gridSize + 1, 4, 1, true);
+  walls.push(wall);
+  wall = new Wall(2, 5, 1, false);
+  walls.push(wall);
+  wall = new Wall(2, 6, 1, false);
+  walls.push(wall);
+  
+  ///Grid Creation
   grid = create2DArray(gridSize, gridSize);
+  for (let y = 0; y < gridSize; y++) {
+    if (grid[y].length > gridSize) {
+      grid[y].pop();
+    }
+  }
   state = "gamePlay";
   timer = new Timer(500);
 }
@@ -77,12 +86,7 @@ function setup() {
 function draw() {
   if (state === "gamePlay") {
     displayGrid();
-    if (timer.isDone()) {
-      for (let i = 0; i < walls.length; i++) {
-        walls[i].move();
-      }
-      timer = new Timer(500);
-    }
+    wallMove();
     deathCheck();
   }
   else if (state === "gameOver") {
@@ -93,6 +97,17 @@ function draw() {
     text("Game Over!", width/2, height/2);
     textSize(70);
     text("Press 'R' To Restart!", width/2, height/2 + 100);
+  }
+}
+
+function wallMove() {
+  if (timer.isDone()) {
+    for (let i = 0; i < walls.length; i++) {
+      if (walls[i].doesItMove) {
+        walls[i].move();
+      }
+    }
+    timer = new Timer(500);
   }
 }
 
@@ -117,9 +132,8 @@ function create2DArray(cols, rows) {
     for (let j = 0; j < cols; j++) {
       ///Wall Create
       for (let w = 0; w < walls.length; w++) {
-        if (j === walls[w].openWallX && i === walls[w].wallY) {
-          emptyArray[i].push(2);
-          print(walls[w]);
+        if (j !== walls[w].openWallX && i === walls[w].wallY) {
+          emptyArray[i][j] = 2;
         }
       }
       ///Player create
@@ -173,7 +187,7 @@ function keyPressed() {
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
         if (grid[y][x] === 1) {
-          if (grid[y][x + 1] === 0) {
+          if (grid[y][x + 1] === 0 && grid[y][x] < gridSize) {
             grid[y][x] = 0;
             grid[y][x + 1] = 1;
             break;
