@@ -1,0 +1,32 @@
+[
+  {
+    "openWallX": 10,
+    "wallY": 3,
+    "speed": 2,
+    "doesItMove": true
+  },
+  {
+    "openWallX": 10,
+    "wallY": 4,
+    "speed": 1,
+    "doesItMove": true
+  },
+  {
+    "openWallX": 2,
+    "wallY": 5,
+    "speed": 1,
+    "doesItMove": false
+  },
+  {
+    "openWallX": 2,
+    "wallY": 6,
+    "speed": 1,
+    "doesItMove": false
+  },
+  {
+    "openWallX": 10,
+    "wallY": 7,
+    "speed": 1,
+    "doesItMove": true
+  }
+]
