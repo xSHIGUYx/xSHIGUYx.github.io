@@ -88,6 +88,7 @@ function draw() {
     displayGrid();
     wallMove();
     deathCheck();
+    goalCheck();
   }
   else if (state === "gameOver") {
     background(255);
@@ -95,6 +96,15 @@ function draw() {
     textSize(140);
     fill(0);
     text("Game Over!", width/2, height/2);
+    textSize(70);
+    text("Press 'R' To Restart!", width/2, height/2 + 100);
+  }
+  else if (state === "win") {
+    background(255);
+    textAlign(CENTER);
+    textSize(140);
+    fill(0);
+    text("Game Won!", width/2, height/2);
     textSize(70);
     text("Press 'R' To Restart!", width/2, height/2 + 100);
   }
@@ -125,6 +135,20 @@ function deathCheck() {
   }
 }
 
+function goalCheck() {
+  let counter = 0;
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
+      if (grid[y][x] === 3) {
+        counter = 1;
+      }
+    }
+  }
+  if (counter === 0) {
+    state = "win";
+  }
+}
+
 function create2DArray(cols, rows) {
   let emptyArray = [];
   for (let i = 0; i < rows; i++) {
@@ -140,6 +164,10 @@ function create2DArray(cols, rows) {
       if (j === 4 && i === 2) {
         emptyArray[i].push(1);
       }
+      ///Goal Create
+      else if (j === 4 && i === 8) {
+        emptyArray[i].push(3);
+      }
       ///Blank Space Create
       else {
         emptyArray[i].push(0);
@@ -152,9 +180,12 @@ function create2DArray(cols, rows) {
 function displayGrid() {
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
-      if (grid[y][x] === 1 || grid[y][x] === 2) {
+      if (grid[y][x] === 1 || grid[y][x] === 2 || grid[y][x] === 3) {
         if (grid[y][x] === 2) {
           fill(255, 0, 0);
+        }
+        else if (grid[y][x] === 3) {
+          fill(255, 255, 0);
         }
         else {
           fill(0);
@@ -174,7 +205,7 @@ function keyPressed() {
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
         if (grid[y][x] === 1) {
-          if (grid[y][x - 1] === 0) {
+          if (grid[y][x - 1] === 0 || grid[y][x - 1] === 3) {
             grid[y][x] = 0;
             grid[y][x - 1] = 1;
           }
@@ -187,7 +218,7 @@ function keyPressed() {
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
         if (grid[y][x] === 1) {
-          if (grid[y][x + 1] === 0 && grid[y][x] < gridSize) {
+          if (grid[y][x + 1] === 0 && grid[y][x] < gridSize || grid[y][x + 1] === 3 && grid[y][x] < gridSize) {
             grid[y][x] = 0;
             grid[y][x + 1] = 1;
             break;
@@ -201,7 +232,7 @@ function keyPressed() {
     for (let y = 0; y < gridSize; y++) {
       for (let x = 0; x < gridSize; x++) {
         if (grid[y][x] === 1) {
-          if (grid[y - 1][x] === 0) {
+          if (grid[y - 1][x] === 0 || grid[y - 1][x] === 3) {
             grid[y][x] = 0;
             grid[y - 1][x] = 1;
           }
@@ -215,7 +246,7 @@ function keyPressed() {
       let counter = 0;
       for (let x = 0; x < gridSize; x++) {
         if (grid[y][x] === 1) {
-          if (grid[y + 1][x] === 0) {
+          if (grid[y + 1][x] === 0 || grid[y + 1][x] === 3) {
             grid[y][x] = 0;
             grid[y + 1][x] = 1;
             counter = 1;
@@ -230,7 +261,7 @@ function keyPressed() {
 
   //Restart
   if (key === "r" || key === "R") {
-    if (state === "gameOver") {
+    if (state === "gameOver" || state === "win") {
       grid = create2DArray(gridSize, gridSize);
       state = "gamePlay";
     }
