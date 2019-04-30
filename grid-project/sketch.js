@@ -263,7 +263,7 @@ function goalCheck() {
       createLevelThree();
     }
     else {
-      state = "win"
+      state = "win";
     }
   }
 }
