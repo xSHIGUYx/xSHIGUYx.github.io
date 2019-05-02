@@ -4,13 +4,22 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
-let playerRun1, playerRun2;
+let playerRun1, playerRun2, playerRun3, playerRun4, playerRun5, playerRun6, playerRun7, playerRun8;
 let runCycle = [];
+let player1;
+let runSprite;
+let runCycleTimer;
 
 function preload() {
-  playerRun1 = loadImage("assets/player-running-1.png");
-  playerRun2 = loadImage("assets/player-running-2.png");
-  runCycle = {currentImage: [playerRun1, playerRun2], imageNumber: 0};
+  playerRun1 = loadImage("assets/playerRun1.png");
+  playerRun2 = loadImage("assets/playerRun2.png");
+  playerRun3 = loadImage("assets/playerRun3.png");
+  playerRun4 = loadImage("assets/playerRun4.png");
+  playerRun5 = loadImage("assets/playerRun5.png");
+  playerRun6 = loadImage("assets/playerRun6.png");
+  playerRun7 = loadImage("assets/playerRun7.png");
+  playerRun8 = loadImage("assets/playerRun8.png");
+  runCycle = {currentImage: [playerRun1, playerRun2, playerRun3, playerRun4, playerRun5, playerRun6, playerRun7, playerRun8], imageNumber: 0};
 }
 
 class Timer {
@@ -29,7 +38,7 @@ class Timer {
 
 class Player {
   constructor(x, speed) {
-    this.width = 50;
+    this.width = 128;
     this.y = height * 0.75;
     this.x = x;
     this.speed = speed;
@@ -38,16 +47,26 @@ class Player {
   }
 
   move() {
-    if (this.move_right && this.x + this.width/2 <= width) {
+    if (this.move_right && this.x + this.width <= width) {
       this.x += this.speed;
     }
-    if (this.move_left && this.x - this.width/2 >= 0) {
+    if (this.move_left && this.x   >= 0) {
       this.x += -this.speed;
     }
   }
 
   draw() {
     if (this.move_right || this.move_left) {
+      if (runCycleTimer.isDone()) {
+        runSprite = runCycle.currentImage[runCycle.imageNumber];
+        if (runCycle.imageNumber + 1 < runCycle.currentImage.length) {
+          runCycle.imageNumber++;
+        } 
+        else {
+          runCycle.imageNumber = 0;
+        }
+        runCycleTimer = new Timer(80);
+      }
       image(runSprite, this.x, this.y, this.width, this.width);
     }
     else {
@@ -55,15 +74,12 @@ class Player {
     }
   }
 }
-let player1;
-let runSprite;
-let runCycleTimer;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  player1 = new Player(25, 2);
+  player1 = new Player(25, 4);
   runSprite = runCycle.currentImage[0];
-  runCycleTimer = new Timer(250);
+  runCycleTimer = new Timer(80);
 }
 
 function draw() {
@@ -74,16 +90,6 @@ function draw() {
 function playerFunctions() {
   player1.draw();
   player1.move();
-  if (runCycleTimer.isDone()) {
-    if (runCycle.imageNumber <= runCycle.currentImage.length) {
-      runSprite = runCycle.currentImage[runCycle.imageNumber];
-      runCycle.imageNumber++;
-    }
-    // else {
-    //   runCycle.imageNumber = 0;
-    // }
-    runCycleTimer = new Timer(250);
-  }
 }
 
 function keyPressed() {
