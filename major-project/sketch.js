@@ -70,7 +70,7 @@ class Player {
       image(runSprite, this.x, this.y, this.width, this.width);
     }
     else {
-      image(playerRun1, this.x, this.y, this.width, this.width);
+      image(playerRun1, this.x, this.y, this.width , this.width);
     }
   }
 }
