@@ -85,6 +85,8 @@ function setup() {
 function draw() {
   background(220);
   playerFunctions();
+  fill(0);
+  rect(0, height - 70, width, 75);
 }
 
 function playerFunctions() {
